@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.migu.redstone</groupId>
+        <artifactId>cmbs-parent</artifactId>
+        <version>1.4.1</version>
+    </parent>
+    <groupId>com.migu.redstone</groupId>
+    <artifactId>cmbs-query-order-test</artifactId>
+    <version>${cmbs.query.order.version}</version>
+    <packaging>jar</packaging>
+    <name>cmbs-query-order</name>
+    <description>cmbs-query-order</description>
+    <properties>
+        <start-class></start-class>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <dependency.locations.enabled>false</dependency.locations.enabled>
+        <elasticsearch.version>5.6.9</elasticsearch.version>
+        <java.version>1.8</java.version>
+        <docker.tags.version>latest</docker.tags.version>
+        <docker.image.name>172.30.150.86:5000/test01/${project.artifactId}</docker.image.name>
+        <docker.base.image.name>172.30.150.64:5000/oraclejre8:latest</docker.base.image.name>
+        <docker.tags.self.version></docker.tags.self.version>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>2.9.9</version>
+        </dependency>
+        <dependency>
+            <groupId>com.migu.redstone</groupId>
+            <artifactId>cmbs-common-service</artifactId>
+            <version>${cmbs.common.service.version}</version>
+        </dependency>
+       <!--  <dependency>
+            <groupId>com.migu.redstone</groupId>
+            <artifactId>cmbs-monitor</artifactId>
+            <version>${cmbs.monitor.version}</version>
+        </dependency> --> 
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>log4j-over-slf4j</artifactId>
+            <version>1.7.25</version>
+        </dependency>
+        <dependency>
+            <groupId>dom4j</groupId>
+            <artifactId>dom4j</artifactId>
+            <version>1.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>3.16</version>
+        </dependency>
+        
+      
+
+		<dependency>
+		    <groupId>org.elasticsearch.client</groupId>
+		    <artifactId>transport</artifactId>
+		    <version>${elasticsearch.version}</version>
+		</dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <configuration>
+                    <encoding>utf-8</encoding>
+                    <useDefaultDelimiters>true</useDefaultDelimiters>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>io.fabric8</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <version>0.22.1</version>
+                <configuration>
+                    <images>
+                        <image>
+                            <name>${docker.image.name}:${docker.tags.version}</name>
+                            <build>
+                                <from>${docker.base.image.name}</from>
+                                <tags>
+                                    <tag>${docker.tags.self.version}</tag>
+                                </tags>
+                                <ports>
+                                    <port>8080</port>
+                                </ports>
+                                <assembly>
+                                    <descriptorRef>artifact</descriptorRef>
+                                </assembly>
+                                <cmd>java -server -Xms2048m -Xmx2048m -XX:MaxMetaspaceSize=256m -XX:+UseG1GC -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/logs/java_heapdump.hprof -jar /maven/${project.build.finalName}.jar</cmd>
+                            </build>
+                        </image>
+                    </images>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.5</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
